@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alvin Yeo — Tan & Yeo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    /* Palette — Onyx (deploy build) */
+    --paper:        #0F0F12;
+    --paper-soft:   #16161B;
+    --paper-line:   #22222A;
+    --ink:          #EFE5D2;
+    --ink-soft:     #B6AC97;
+    --ink-mute:     #807766;
+    --accent:       #C99454;
+    --accent-soft:  #DCAD72;
+    --accent-tint:  rgba(201,148,84,0.10);
+    --cta-bg:       #C99454;
+    --cta-fg:       #0F0F12;
+    --cta-fg-mute:  rgba(15,15,18,0.65);
+    --cta-glow:     rgba(201,148,84,0.42);
+    --grain-blend:  screen;
+    --grain-color:  rgba(255,225,170,0.05);
+  }
+
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper grain */
+  body::before{
+    content:'';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(rgba(60,40,20,0.05) 1px, transparent 1px),
+      radial-gradient(rgba(60,40,20,0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Layout primitives ───────────────────────────────────────── */
+  .wrap{
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  .rule{
+    height: 1px;
+    background: var(--paper-line);
+    width: 100%;
+  }
+
+  /* ── Top bar ─────────────────────────────────────────────────── */
+  .topbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0 18px;
+  }
+
+  .brand{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .brand .mark{
+    width: 28px; height: 28px;
+    border: 1px solid var(--ink);
+    display: grid; place-items: center;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1;
+    padding-bottom: 2px;
+  }
+  .brand .div{
+    width: 1px; height: 14px; background: var(--paper-line);
+  }
+  .brand .firm em{
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .topnav{
+    display: flex;
+    gap: 28px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .topnav a{ transition: color .2s; position: relative; }
+  .topnav a:hover{ color: var(--accent); }
+  .topnav a::after{
+    content:''; position: absolute; left: 0; right: 0; bottom: -6px;
+    height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform .25s ease;
+  }
+  .topnav a:hover::after{ transform: scaleX(1); }
+
+  @media (max-width: 640px){
+    .topnav{ display: none; }
+  }
+
+  /* ── Hero ────────────────────────────────────────────────────── */
+  .hero{
+    padding: 56px 0 80px;
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 56px;
+    align-items: end;
+  }
+
+  .eyebrow{
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .eyebrow::before{
+    content:''; width: 24px; height: 1px; background: var(--accent);
+  }
+
+  .display{
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.015em;
+    font-size: clamp(58px, 11vw, 156px);
+    color: var(--ink);
+  }
+  .display .italic{
+    font-style: italic;
+    color: var(--accent);
+  }
+  .display .amp{
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 0.78em;
+    padding: 0 0.08em;
+    position: relative;
+    top: -0.04em;
+  }
+
+  .lede{
+    margin-top: 36px;
+    max-width: 540px;
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.32;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .lede em{
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-meta{
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 36px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .hero-meta div span{
+    display: block;
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .hero-meta div span em{
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .status-pill{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px 8px 12px;
+    border: 1px solid var(--paper-line);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.35);
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 32px;
+  }
+  .status-pill .dot{
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #2f9c5a;
+    box-shadow: 0 0 0 4px rgba(47,156,90,0.18);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ box-shadow: 0 0 0 4px rgba(47,156,90,0.18); }
+    50%{    box-shadow: 0 0 0 7px rgba(47,156,90,0.06); }
+  }
+
+  /* Portrait */
+  .portrait{
+    position: relative;
+    aspect-ratio: 4/5;
+    width: 100%;
+    max-width: 440px;
+    justify-self: end;
+  }
+  .portrait .glow{
+    position: absolute;
+    inset: -10% -10% -10% -10%;
+    background: radial-gradient(60% 60% at 20% 40%, var(--accent), transparent 70%);
+    filter: blur(50px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .portrait .frame{
+    position: relative;
+    z-index: 1;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--paper-soft);
+    box-shadow:
+      0 30px 60px -25px rgba(0,0,0,0.55),
+      0 4px 10px -4px rgba(0,0,0,0.25);
+  }
+  .portrait .frame img{
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+    display: block;
+  }
+  .portrait .caption{
+    position: absolute;
+    z-index: 2;
+    left: -8px; bottom: 18px;
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    padding: 10px 14px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .portrait .caption b{
+    font-weight: 500;
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+  }
+  .portrait .caption .line{
+    width: 18px; height: 1px; background: var(--accent);
+  }
+
+  @media (max-width: 880px){
+    .hero{
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 32px 0 60px;
+    }
+    .portrait{
+      justify-self: start;
+      max-width: 320px;
+      order: -1;
+    }
+  }
+
+  /* ── Section header ─────────────────────────────────────────── */
+  .section{
+    padding: 100px 0;
+    position: relative;
+  }
+  .section + .section{
+    border-top: 1px solid var(--paper-line);
+  }
+  .sec-head{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    margin-bottom: 56px;
+    align-items: baseline;
+  }
+  .sec-num{
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .sec-num::before{
+    content: ''; display: inline-block; width: 24px; height: 1px;
+    background: var(--accent); vertical-align: middle; margin-right: 12px;
+    transform: translateY(-2px);
+  }
+  .sec-title{
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .sec-title em{ font-style: italic; color: var(--accent); }
+
+  @media (max-width: 720px){
+    .section{ padding: 72px 0; }
+    .sec-head{ grid-template-columns: 1fr; gap: 14px; margin-bottom: 36px; }
+  }
+
+  /* ── About ──────────────────────────────────────────────────── */
+  .about-grid{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+  }
+  .about-meta{
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .about-meta div span{
+    display: block;
+    font-family: 'Geist', sans-serif;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .about-body{
+    max-width: 680px;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .about-body p{ margin-bottom: 22px; }
+  .about-body p:last-child{ margin-bottom: 0; }
+  .about-body strong{
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .about-body .pull{
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.25;
+    color: var(--ink);
+    padding: 28px 0 28px 28px;
+    border-left: 2px solid var(--accent);
+    margin: 32px 0;
+    max-width: 580px;
+  }
+
+  @media (max-width: 720px){
+    .about-grid{ grid-template-columns: 1fr; gap: 24px; }
+    .about-body{ font-size: 17px; }
+    .about-body .pull{ font-size: 22px; padding-left: 20px; margin: 24px 0; }
+  }
+
+  /* ── Services ───────────────────────────────────────────────── */
+  .services{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+  }
+  .services-meta{
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    line-height: 1.7;
+  }
+  .services-list{
+    border-top: 1px solid var(--paper-line);
+  }
+  .svc{
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--paper-line);
+    align-items: baseline;
+    cursor: default;
+    transition: padding-left .3s ease, background .3s ease;
+    position: relative;
+  }
+  .svc::before{
+    content:'';
+    position: absolute; left: 0; top: 50%;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width .35s ease;
+  }
+  .svc:hover{ padding-left: 20px; }
+  .svc:hover::before{ width: 12px; }
+  .svc:hover .svc-title{ color: var(--accent); }
+
+  .svc-num{
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    padding-top: 4px;
+  }
+  .svc-text .svc-title{
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 3.2vw, 36px);
+    line-height: 1.1;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 10px;
+    transition: color .25s;
+  }
+  .svc-text .svc-desc{
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 560px;
+  }
+  .svc-tag{
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding: 5px 10px;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    white-space: nowrap;
+    align-self: start;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 720px){
+    .services{ grid-template-columns: 1fr; gap: 24px; }
+    .svc{
+      grid-template-columns: 60px 1fr;
+      grid-template-rows: auto auto;
+      gap: 12px 16px;
+      padding: 22px 0;
+    }
+    .svc-tag{ grid-column: 2; justify-self: start; margin-top: 4px; }
+    .svc-text .svc-title{ font-size: 24px; }
+  }
+
+  /* ── Contact ────────────────────────────────────────────────── */
+  .contact-wrap{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+  }
+  .contact-meta{
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    line-height: 1.7;
+  }
+
+  .contact-prime{
+    display: block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 32px;
+    border-radius: 4px;
+    transition: background .25s, transform .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-prime::after{
+    content:''; position: absolute;
+    right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(194,106,62,0.4), transparent 60%);
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity .3s;
+  }
+  .contact-prime:hover{ background: var(--accent); transform: translateY(-2px); }
+  .contact-prime:hover::after{ opacity: 0; }
+  .contact-prime .row{
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; position: relative; z-index: 1;
+  }
+  .contact-prime .lbl{
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(242,234,218,0.55);
+    margin-bottom: 8px;
+  }
+  .contact-prime .num{
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4.2vw, 44px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+  }
+  .contact-prime .sub{
+    margin-top: 12px;
+    font-size: 13px;
+    color: rgba(242,234,218,0.65);
+  }
+  .contact-prime .wa-icon{
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(242,234,218,0.08);
+    border: 1px solid rgba(242,234,218,0.2);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    color: var(--paper);
+    transition: background .25s;
+  }
+  .contact-prime:hover .wa-icon{
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .contact-secondary{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .cs-link{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 22px;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.25);
+    transition: all .25s;
+    min-height: 130px;
+  }
+  .cs-link:hover{
+    border-color: var(--accent);
+    background: var(--accent-tint);
+    transform: translateY(-2px);
+  }
+  .cs-link .cs-lbl{
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cs-link:hover .cs-lbl{ color: var(--accent); }
+  .cs-link .cs-val{
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 500;
+    margin-top: auto;
+    word-break: break-all;
+  }
+  .cs-link .cs-val em{
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+  }
+  .cs-link .arrow{
+    width: 18px; height: 18px; flex-shrink: 0;
+    transition: transform .25s;
+  }
+  .cs-link:hover .arrow{ transform: translate(2px,-2px); color: var(--accent); }
+
+  @media (max-width: 720px){
+    .contact-wrap{ grid-template-columns: 1fr; gap: 24px; }
+    .contact-secondary{ grid-template-columns: 1fr; }
+    .contact-prime .num{ font-size: 26px; }
+    .contact-prime{ padding: 22px 22px; }
+    .contact-prime .wa-icon{ width: 44px; height: 44px; }
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────── */
+  footer{
+    border-top: 1px solid var(--paper-line);
+    padding: 36px 0 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  footer .firm-mark em{
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  /* ── Mobile sticky WhatsApp CTA ─────────────────────────────── */
+  .fab{
+    position: fixed;
+    bottom: 18px; right: 18px;
+    z-index: 40;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: #1B7F4D;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.35), 0 4px 8px -2px rgba(0,0,0,0.15);
+    transition: transform .25s;
+  }
+  .fab:hover{ transform: scale(1.05); }
+  @media (max-width: 720px){
+    .fab{ display: flex; }
+  }
+
+  /* ── Reveal on scroll ───────────────────────────────────────── */
+  [data-reveal]{
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  [data-reveal].in{
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* fade-in cascade for hero */
+  .hero-stagger > * { opacity: 0; transform: translateY(14px); animation: rise .9s ease forwards; }
+  .hero-stagger > *:nth-child(1){ animation-delay: 0.05s; }
+  .hero-stagger > *:nth-child(2){ animation-delay: 0.15s; }
+  .hero-stagger > *:nth-child(3){ animation-delay: 0.28s; }
+  .hero-stagger > *:nth-child(4){ animation-delay: 0.40s; }
+  .hero-stagger > *:nth-child(5){ animation-delay: 0.52s; }
+  .portrait{ opacity: 0; animation: rise 1s ease 0.2s forwards; }
+  @keyframes rise{
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="wrap" data-screen-label="01 Hero">
+
+  <!-- ─── Top Bar ──────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">A</div>
+      <span class="firm">Tan <em>&amp;</em> Yeo</span>
+      <div class="div"></div>
+      <span>Bukit Jalil · KL</span>
+    </div>
+    <nav class="topnav">
+      <a href="#about">About</a>
+      <a href="#work">What I Do</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <div class="rule"></div>
+
+  <!-- ─── Hero ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-stagger">
+      <div class="eyebrow">Hi, I&rsquo;m</div>
+      <h1 class="display">
+        Alvin<br/>
+        <span class="italic">Yeo.</span>
+      </h1>
+      <p class="lede">
+        I help agents and bankers make sure their clients enjoy a <em>smooth, seamless</em> property transaction&nbsp;&mdash; from offer letter to keys in hand.
+      </p>
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span>Open for new referrals &middot; replies same day</span>
+      </div>
+      <div class="hero-meta">
+        <div>
+          Role
+          <span>Business Manager, <em>Tan &amp; Yeo</em></span>
+        </div>
+        <div>
+          Based in
+          <span>Bukit Jalil, Kuala Lumpur</span>
+        </div>
+        <div>
+          Practice
+          <span>Property &amp; conveyancing law</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portrait">
+      <div class="glow"></div>
+      <div class="frame">
+        <img src="alvin.jpg" alt="Alvin Yeo" />
+      </div>
+      <div class="caption">
+        <span class="line"></span>
+        <b>Alvin Yeo</b>
+        <span>· KL · 2025</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── About ────────────────────────────────────────────── -->
+  <section class="section" id="about" data-screen-label="02 About">
+    <div class="sec-head" data-reveal>
+      <div class="sec-num">01 / About</div>
+      <h2 class="sec-title">A <em>family firm</em>,<br/>run with care.</h2>
+    </div>
+    <div class="about-grid" data-reveal>
+      <div class="about-meta">
+        <div>Firm<span>Tan &amp; Yeo</span></div>
+        <div>Founded<span>By my late father</span></div>
+        <div>Focus<span>Property &amp; conveyancing</span></div>
+        <div>Years in practice<span>Two generations</span></div>
+      </div>
+      <div class="about-body">
+        <p>I&rsquo;m based in <strong>Bukit Jalil, Kuala Lumpur</strong> and I run <strong>Tan &amp; Yeo</strong> — a legal firm my father started, that I took over and have been building since.</p>
+        <p>We focus on property law — <strong>SPAs, loan documentation, tenancy agreements, perfection of transfer</strong>. I&rsquo;m not a lawyer myself; I manage the business side and I&rsquo;m the person agents and bankers actually talk to day-to-day.</p>
+        <p class="pull">I care a lot about being easy to reach, honest about timelines, and making sure every referral partner feels looked after.</p>
+        <p>If that sounds like what you&rsquo;re looking for — let&rsquo;s talk.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── What I Do ────────────────────────────────────────── -->
+  <section class="section" id="work" data-screen-label="03 Services">
+    <div class="sec-head" data-reveal>
+      <div class="sec-num">02 / What I Do</div>
+      <h2 class="sec-title">Four things<br/>we handle <em>well</em>.</h2>
+    </div>
+    <div class="services" data-reveal>
+      <div class="services-meta">
+        Property law, end-to-end.<br/><br/>
+        Drafting · Execution · Stamping · Registration
+      </div>
+      <div class="services-list">
+        <div class="svc">
+          <div class="svc-num">01</div>
+          <div class="svc-text">
+            <div class="svc-title">Sales &amp; Purchase Agreements</div>
+            <div class="svc-desc">Full SPA documentation for sub-sale and new project properties. We handle drafting, execution, and stamping — efficiently.</div>
+          </div>
+          <div class="svc-tag">Sub-sale · Project</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">02</div>
+          <div class="svc-text">
+            <div class="svc-title">Loan Documentation</div>
+            <div class="svc-desc">Loan agreements with all major banks, processed promptly so your transactions don&rsquo;t stall at the legal stage.</div>
+          </div>
+          <div class="svc-tag">All major banks</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">03</div>
+          <div class="svc-text">
+            <div class="svc-title">Tenancy Agreements</div>
+            <div class="svc-desc">Drafting and execution of tenancy agreements for residential and commercial properties — protecting both landlords and tenants.</div>
+          </div>
+          <div class="svc-tag">Residential · Commercial</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">04</div>
+          <div class="svc-text">
+            <div class="svc-title">Perfection of Transfer</div>
+            <div class="svc-desc">Handling the conversion from master title to individual or strata title — ensuring your property ownership is properly registered.</div>
+          </div>
+          <div class="svc-tag">Strata · Individual</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Contact ──────────────────────────────────────────── -->
+  <section class="section" id="contact" data-screen-label="04 Contact">
+    <div class="sec-head" data-reveal>
+      <div class="sec-num">03 / Get In Touch</div>
+      <h2 class="sec-title">The fastest way<br/>is <em>WhatsApp.</em></h2>
+    </div>
+    <div class="contact-wrap" data-reveal>
+      <div class="contact-meta">
+        Fastest reply<br/>during office hours<br/><br/>
+        Mon &ndash; Fri<br/>9:00 &ndash; 18:00 MYT
+      </div>
+      <div>
+        <a href="https://wa.me/601110758879" target="_blank" rel="noopener" class="contact-prime">
+          <div class="row">
+            <div>
+              <div class="lbl">WhatsApp · primary</div>
+              <div class="num">+60 11&ndash;1075 8879</div>
+              <div class="sub">Tap to start a chat — I usually reply within the hour.</div>
+            </div>
+            <div class="wa-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
+          </div>
+        </a>
+
+        <div class="contact-secondary">
+
+          <a href="https://wa.me/60166305233" target="_blank" rel="noopener" class="cs-link">
+            <div class="cs-lbl">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.93 11.93 0 0012.04 0C5.5 0 .17 5.34.17 11.9c0 2.1.55 4.14 1.59 5.94L.06 24l6.34-1.66a11.9 11.9 0 005.64 1.44h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.18-1.24-6.18-3.42-8.4z"/></svg>
+              WhatsApp · alt
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="margin-left:auto"><path d="M7 17L17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cs-val">016&ndash;630 5233</div>
+          </a>
+
+          <a href="/cdn-cgi/l/email-protection#0e6f627867604e7a6f60776b61206d6163" class="cs-link">
+            <div class="cs-lbl">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Email
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="margin-left:auto"><path d="M7 17L17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cs-val">alvin@<em>tanyeo</em>.com</div>
+          </a>
+
+          <a href="https://www.linkedin.com/in/alvinyeo07/" target="_blank" rel="noopener" class="cs-link">
+            <div class="cs-lbl">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.03-1.85-3.03-1.85 0-2.13 1.44-2.13 2.93v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 11.01-4.13 2.06 2.06 0 010 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+              LinkedIn
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="margin-left:auto"><path d="M7 17L17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cs-val">@alvinyeo07</div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ───────────────────────────────────────────── -->
+  <footer>
+    <div class="firm-mark">© 2025 Alvin Yeo · <em>Tan &amp; Yeo</em> · Advocates &amp; Solicitors</div>
+    <div>Bukit Jalil · Kuala Lumpur · MY</div>
+  </footer>
+
+</div>
+
+<!-- Mobile sticky WA -->
+<a class="fab" href="https://wa.me/601110758879" target="_blank" rel="noopener" aria-label="WhatsApp Alvin">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
